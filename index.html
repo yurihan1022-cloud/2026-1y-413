@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>물질의 상태 변화 | 중학교 과학 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Gaegu:wght@400;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* palette grounded in the textbook's own warm(heat-added)/cool(heat-removed) arrow convention */
+    --solid:   #4C7CC7;   /* 고체 - 얼음 블루 */
+    --solid-l: #E4EEFC;
+    --liquid:  #2AA6A0;   /* 액체 - 물방울 틸 */
+    --liquid-l:#DEF6F3;
+    --gas:     #F2914B;   /* 기체 - 김/열기 오렌지 */
+    --gas-l:   #FFEEDC;
+    --warm:    #EE6B4D;   /* 가열(융해·기화·승화) 빨강 계열 */
+    --cool:    #3E7CC9;   /* 냉각(응고·액화·승화) 파랑 계열 */
+    --ink:     #26324A;
+    --ink-soft:#5B6B85;
+    --paper:   #FBFCFE;
+    --card:    #FFFFFF;
+    --line:    #E4E9F2;
+    --sun:     #FFC94A;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 8% 4%, var(--solid-l) 0%, transparent 40%),
+      radial-gradient(circle at 95% 12%, var(--gas-l) 0%, transparent 38%),
+      radial-gradient(circle at 50% 60%, var(--liquid-l) 0%, transparent 45%),
+      var(--paper);
+    color:var(--ink);
+    font-family:'Noto Sans KR', sans-serif;
+    line-height:1.65;
+    padding-bottom:80px;
+  }
+  h1,h2,h3,.jua{font-family:'Jua', sans-serif; font-weight:400;}
+  .doodle{font-family:'Gaegu', sans-serif; font-weight:700;}
+
+  /* ===== Top bar ===== */
+  .topbar{
+    position:sticky; top:0; z-index:50;
+    background:rgba(251,252,254,0.92);
+    backdrop-filter:blur(8px);
+    border-bottom:2px solid var(--line);
+    padding:10px 4vw;
+    display:flex; align-items:center; gap:14px;
+  }
+  .topbar .brand{
+    font-family:'Jua',sans-serif; font-size:1.05rem; color:var(--solid);
+    white-space:nowrap;
+  }
+  .topbar .brand span{color:var(--gas);}
+  .navscroll{
+    display:flex; gap:8px; overflow-x:auto; scrollbar-width:none;
+    flex:1;
+  }
+  .navscroll::-webkit-scrollbar{display:none;}
+  .navchip{
+    flex:0 0 auto;
+    padding:7px 14px;
+    border-radius:999px;
+    background:#fff;
+    border:2px solid var(--line);
+    color:var(--ink-soft);
+    font-size:0.82rem;
+    font-weight:700;
+    text-decoration:none;
+    white-space:nowrap;
+    transition:.15s;
+  }
+  .navchip:hover{border-color:var(--solid); color:var(--solid); transform:translateY(-1px);}
+
+  /* ===== Hero ===== */
+  .hero{
+    max-width:1000px; margin:36px auto 10px; padding:0 5vw;
+    text-align:center;
+  }
+  .crumbs{
+    font-size:0.8rem; color:var(--ink-soft); font-weight:500;
+    background:#fff; display:inline-block; padding:6px 16px; border-radius:999px;
+    border:1px solid var(--line); margin-bottom:18px;
+  }
+  .hero h1{
+    font-size:clamp(2rem,5vw,3.2rem);
+    margin:0 0 8px;
+    color:var(--ink);
+  }
+  .hero h1 .hl{color:var(--liquid);}
+  .hero p.sub{color:var(--ink-soft); font-size:1.05rem; margin-top:0;}
+  .hero-art{
+    display:flex; justify-content:center; gap:26px; margin:26px 0 6px;
+    flex-wrap:wrap;
+  }
+  .hero-chip{
+    width:96px; height:96px; border-radius:28px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:2.6rem;
+    box-shadow:0 10px 24px -12px rgba(38,50,74,.25);
+    animation:bob 3.4s ease-in-out infinite;
+  }
+  .hero-chip.s{background:var(--solid-l);}
+  .hero-chip.l{background:var(--liquid-l); animation-delay:.4s;}
+  .hero-chip.g{background:var(--gas-l); animation-delay:.8s;}
+  @keyframes bob{0%,100%{transform:translateY(0) rotate(-2deg);}50%{transform:translateY(-10px) rotate(2deg);}}
+  @media(prefers-reduced-motion:reduce){.hero-chip{animation:none;}}
+
+  /* ===== Sections ===== */
+  .wrap{max-width:1000px; margin:0 auto; padding:0 5vw;}
+  section.block{margin-top:64px; scroll-margin-top:70px;}
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:'Jua',sans-serif; font-size:0.95rem;
+    padding:6px 16px; border-radius:999px; margin-bottom:14px;
+  }
+  .eyebrow.tag-prev{background:#EFF1F6; color:var(--ink-soft);}
+  .eyebrow.tag-goal{background:var(--solid-l); color:var(--solid);}
+  .eyebrow.tag-think{background:#FDEFE0; color:#C97A1B;}
+  .eyebrow.tag-concept{background:var(--liquid-l); color:var(--liquid);}
+  .eyebrow.tag-lab{background:var(--gas-l); color:#C6631C;}
+  .eyebrow.tag-check{background:#F1E9FB; color:#7C4DBF;}
+  .eyebrow.tag-wrap{background:var(--solid-l); color:var(--solid);}
+  .block h2{font-size:clamp(1.5rem,3.4vw,2.1rem); margin:0 0 4px;}
+  .block .pageref{color:var(--ink-soft); font-size:.85rem; margin:0 0 20px;}
+
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:24px;
+    padding:26px 28px; box-shadow:0 14px 30px -22px rgba(38,50,74,.35);
+  }
+  .card + .card{margin-top:18px;}
+
+  /* previous-unit check */
+  .checktable{width:100%; border-collapse:separate; border-spacing:0; margin-top:14px;}
+  .checktable th, .checktable td{
+    padding:12px 10px; text-align:center; font-size:.92rem;
+  }
+  .checktable thead th{color:var(--ink-soft); font-weight:700; border-bottom:2px solid var(--line);}
+  .checktable td:first-child, .checktable th:first-child{text-align:left; font-weight:500; padding-right:16px;}
+  .opt-cell{cursor:pointer; border-radius:12px; transition:.15s; user-select:none;}
+  .opt-cell .circle{
+    width:34px;height:34px;border-radius:50%;
+    border:2.5px solid #D9DEE8; margin:0 auto;
+    display:flex;align-items:center;justify-content:center;font-weight:900;color:transparent;
+  }
+  .opt-cell:hover .circle{border-color:var(--liquid);}
+  .opt-cell.picked .circle{border-color:var(--liquid); color:var(--liquid); background:var(--liquid-l);}
+  .opt-cell.picked .circle::after{content:"○";}
+  .opt-cell.correct .circle{border-color:#2FA84F; background:#E7F8EC; color:#2FA84F;}
+  .opt-cell.correct .circle::after{content:"○";}
+  .opt-cell.wrong .circle{border-color:#E4574B; background:#FDEAE8; color:#E4574B;}
+  .opt-cell.wrong .circle::after{content:"×";}
+
+  .btn{
+    appearance:none; border:none; cursor:pointer;
+    font-family:'Jua',sans-serif; font-size:.95rem;
+    padding:11px 22px; border-radius:999px;
+    background:var(--solid); color:#fff;
+    box-shadow:0 8px 18px -8px rgba(76,124,199,.6);
+    transition:.15s;
+  }
+  .btn:hover{transform:translateY(-2px);}
+  .btn.ghost{background:#fff; color:var(--ink-soft); border:2px solid var(--line); box-shadow:none;}
+  .btn.small{padding:7px 16px; font-size:.82rem;}
+  .actions{display:flex; gap:10px; margin-top:16px; flex-wrap:wrap;}
+
+  .feedback{
+    margin-top:14px; padding:14px 16px; border-radius:14px;
+    background:var(--liquid-l); color:#146B65; font-size:.92rem;
+    display:none;
+  }
+  .feedback.show{display:block; animation:pop .25s ease;}
+  @keyframes pop{from{opacity:0; transform:translateY(-6px);}to{opacity:1; transform:translateY(0);}}
+
+  /* goals */
+  .goal-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  @media(max-width:680px){.goal-grid{grid-template-columns:1fr;}}
+  .goal-card{
+    background:var(--card); border:1px solid var(--line); border-radius:22px;
+    padding:22px; display:flex; gap:14px; align-items:flex-start;
+    box-shadow:0 14px 30px -22px rgba(38,50,74,.3);
+  }
+  .goal-num{
+    flex:0 0 auto; width:40px; height:40px; border-radius:50%;
+    background:var(--solid); color:#fff; font-family:'Jua',sans-serif;
+    display:flex; align-items:center; justify-content:center; font-size:1.05rem;
+  }
+  .goal-card:nth-child(2) .goal-num{background:var(--liquid);}
+
+  /* think-wake (생각깨우기) */
+  .think-card{
+    background:linear-gradient(135deg, #FFF6E9, #FFEFDC);
+    border:1px solid #FBE3BF; border-radius:26px; padding:26px;
+    text-align:center;
+  }
+  .think-card .qtext{font-size:1.15rem; font-weight:700; margin:14px 0;}
+  .reveal-box{
+    display:none; margin-top:14px; padding:16px 18px; border-radius:16px;
+    background:#fff; border:1.5px dashed #F0B45E; text-align:left; font-size:.95rem;
+  }
+  .reveal-box.show{display:block; animation:pop .25s ease;}
+
+  /* concept fill-in */
+  .concept-text{font-size:1.02rem;}
+  .blank{
+    display:inline-flex; align-items:center; justify-content:center;
+    min-width:96px; padding:2px 10px; margin:0 3px;
+    border-bottom:3px solid var(--solid); border-radius:6px;
+    background:var(--solid-l); color:transparent; font-weight:700;
+    cursor:pointer; transition:.15s;
+  }
+  .blank.show{color:var(--solid);}
+  .blank:hover{background:#D8E6FB;}
+
+  .term-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:6px;}
+  @media(max-width:680px){.term-grid{grid-template-columns:1fr;}}
+  .term-card{
+    border-radius:20px; padding:20px; position:relative; overflow:hidden;
+  }
+  .term-card .arrow-tag{
+    position:absolute; top:14px; right:16px; font-size:.72rem; font-weight:700;
+    padding:3px 10px; border-radius:999px; color:#fff;
+  }
+  .term-card h3{margin:2px 0 6px; font-size:1.25rem;}
+  .term-card p{margin:0; font-size:.92rem; color:var(--ink-soft);}
+  .term-card.melt{background:var(--solid-l);}
+  .term-card.freeze{background:var(--liquid-l);}
+  .term-card.vap{background:var(--gas-l);}
+  .term-card.cond{background:var(--liquid-l);}
+  .term-card.sub{background:linear-gradient(135deg,var(--solid-l),var(--gas-l));}
+  .arrow-tag.warm{background:var(--warm);}
+  .arrow-tag.cool{background:var(--cool);}
+
+  .example-row{
+    display:flex; gap:12px; margin-top:16px; flex-wrap:wrap;
+  }
+  .example-pill{
+    background:#fff; border:1.5px solid var(--line); border-radius:14px;
+    padding:10px 14px; font-size:.88rem; flex:1 1 220px;
+    display:flex; gap:8px; align-items:center;
+  }
+  .example-gallery{
+    display:grid; grid-template-columns:1fr 1fr; gap:16px;
+  }
+  @media(max-width:600px){.example-gallery{grid-template-columns:1fr;}}
+  .ex-photo{
+    margin:0; border-radius:18px; overflow:hidden;
+    border:1px solid var(--line); background:#fff;
+    box-shadow:0 10px 22px -16px rgba(38,50,74,.4);
+  }
+  .ex-photo img{width:100%; display:block; aspect-ratio:4/3; object-fit:cover;}
+  .ex-photo figcaption{
+    padding:10px 14px; font-size:.84rem; color:var(--ink-soft);
+  }
+
+  /* lab experiment */
+  .lab-card{
+    background:linear-gradient(180deg,#fff, #FFFBF4);
+    border:1px solid #F3E4C8; border-radius:26px; padding:0; overflow:hidden;
+    box-shadow:0 16px 34px -24px rgba(38,50,74,.4);
+  }
+  .lab-head{
+    background:var(--gas); color:#fff; padding:18px 26px;
+    display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+  }
+  .lab-head h3{margin:0; font-size:1.25rem;}
+  .lab-head .lab-icon{font-size:1.6rem;}
+  .lab-body{padding:24px 26px 28px;}
+  .lab-sub{
+    display:flex; align-items:center; gap:8px; font-family:'Jua',sans-serif;
+    color:#C6631C; font-size:1rem; margin:22px 0 10px;
+  }
+  .lab-sub:first-child{margin-top:0;}
+  .lab-sub .num{
+    width:26px;height:26px;border-radius:50%;background:var(--gas-l);
+    display:flex;align-items:center;justify-content:center;font-size:.85rem;color:var(--gas);
+  }
+  .chip-row{display:flex; flex-wrap:wrap; gap:8px;}
+  .mat-chip{
+    background:#F6F8FC; border:1px solid var(--line); border-radius:999px;
+    padding:6px 14px; font-size:.85rem;
+  }
+  .safety-list{margin:0; padding-left:0; list-style:none;}
+  .safety-list li{
+    display:flex; gap:10px; align-items:flex-start; margin-bottom:10px;
+    background:#FFF4F0; border:1px solid #FBD9CC; border-radius:14px; padding:12px 14px;
+    font-size:.9rem;
+  }
+  .safety-list li .warnicon{font-size:1.1rem;}
+
+  .step-block{margin-bottom:20px;}
+  .step-flex{display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap;}
+  .step-flex img{
+    width:230px; max-width:100%; border-radius:18px; border:1px solid var(--line);
+    box-shadow:0 10px 20px -14px rgba(38,50,74,.4);
+  }
+  .step-text{flex:1; min-width:240px;}
+  .step-text p.instruction{font-weight:500; margin:0 0 10px;}
+  .qa-box{
+    background:#F5F0FC; border-radius:14px; padding:12px 14px; margin-top:10px;
+  }
+  .qa-box .q{font-weight:700; color:#6B3FB0; font-size:.9rem; margin:0 0 6px;}
+  .qa-box .a{
+    display:none; font-size:.9rem; color:var(--ink); margin:0;
+    padding-top:6px; border-top:1px dashed #D9C7F0;
+  }
+  .qa-box .a.show{display:block; animation:pop .25s ease;}
+
+  .video-link{
+    margin:16px 0 22px; border-radius:18px;
+    background:linear-gradient(135deg,var(--gas),#F7AD6C);
+    box-shadow:0 14px 28px -16px rgba(242,145,75,.55);
+    padding:16px 20px; display:flex; align-items:center; gap:16px;
+    text-decoration:none; color:#fff; transition:.15s;
+  }
+  .video-link:hover{transform:translateY(-2px); box-shadow:0 18px 32px -16px rgba(242,145,75,.65);}
+  .video-link-play{
+    flex:0 0 auto; width:46px; height:46px; border-radius:50%;
+    background:rgba(255,255,255,.28); display:flex; align-items:center; justify-content:center;
+    font-size:1.15rem; padding-left:3px;
+  }
+  .video-link-text{display:flex; flex-direction:column; gap:2px; flex:1;}
+  .video-link-text b{font-family:'Jua',sans-serif; font-size:1rem;}
+  .video-link-text span{font-size:.82rem; opacity:.92;}
+  .video-link-arrow{font-size:1.2rem; opacity:.9;}
+
+  /* self check */
+  .sc-card{margin-bottom:18px;}
+  .sc-q{font-weight:700; margin:0 0 12px; display:flex; gap:10px; align-items:flex-start;}
+  .sc-q .qnum{
+    flex:0 0 auto; width:28px;height:28px;border-radius:50%;
+    background:#7C4DBF; color:#fff; font-family:'Jua',sans-serif; font-size:.85rem;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .ox-row{display:flex; gap:12px; margin-top:8px;}
+  .ox-btn{
+    width:64px; height:64px; border-radius:18px; border:2px solid var(--line);
+    background:#fff; font-family:'Jua',sans-serif; font-size:1.6rem; cursor:pointer;
+    color:var(--ink-soft); transition:.15s;
+  }
+  .ox-btn:hover{transform:translateY(-2px);}
+  .ox-btn.pick-correct{background:#E7F8EC; border-color:#2FA84F; color:#2FA84F;}
+  .ox-btn.pick-wrong{background:#FDEAE8; border-color:#E4574B; color:#E4574B;}
+
+  .match-grid{display:grid; grid-template-columns:1.3fr 1fr; gap:10px 18px; margin-top:14px; align-items:center;}
+  @media(max-width:680px){.match-grid{grid-template-columns:1fr;}}
+  .match-item{
+    background:#F6F8FC; border:1px solid var(--line); border-radius:14px;
+    padding:12px 14px; font-size:.92rem;
+  }
+  .match-select{
+    width:100%; padding:10px 12px; border-radius:12px; border:1.5px solid var(--line);
+    font-family:'Noto Sans KR',sans-serif; font-size:.9rem; background:#fff; color:var(--ink-soft);
+  }
+  .match-select.ok{border-color:#2FA84F; color:#2FA84F; font-weight:700;}
+  .match-select.no{border-color:#E4574B; color:#E4574B; font-weight:700;}
+
+  /* summary map */
+  .summary-card{text-align:center;}
+  .summary-card img{max-width:100%; border-radius:20px; margin-top:10px;}
+  .term-legend{display:flex; justify-content:center; gap:22px; margin-top:18px; flex-wrap:wrap;}
+  .term-legend span{font-size:.85rem; color:var(--ink-soft); display:flex; align-items:center; gap:6px;}
+  .dot{width:12px;height:12px;border-radius:50%; display:inline-block;}
+
+  .recap-grid{display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-top:18px;}
+  @media(max-width:820px){.recap-grid{grid-template-columns:repeat(2,1fr);}}
+  .recap-chip{
+    border-radius:16px; padding:14px 10px; text-align:center; font-size:.85rem;
+    box-shadow:0 8px 18px -12px rgba(38,50,74,.3);
+  }
+  .recap-chip .ic{font-size:1.5rem; display:block; margin-bottom:6px;}
+  .recap-chip b{display:block; font-family:'Jua',sans-serif; font-size:1rem; margin-bottom:2px;}
+
+  /* next unit */
+  .next-card{
+    background:linear-gradient(135deg,var(--solid), #6E9BE0);
+    color:#fff; border-radius:26px; padding:30px 32px; text-align:center;
+    box-shadow:0 18px 36px -20px rgba(76,124,199,.6);
+  }
+  .next-card .jua{font-size:1.4rem;}
+  .next-card p{opacity:.92; margin:8px 0 0;}
+
+  footer{text-align:center; color:var(--ink-soft); font-size:.8rem; margin-top:70px;}
+
+  /* fade-in on scroll */
+  .fade-in{opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease;}
+  .fade-in.in{opacity:1; transform:translateY(0);}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">🧊 상태 변화 <span>연구소</span></div>
+  <div class="navscroll">
+    <a class="navchip" href="#prev">이전 단원 확인</a>
+    <a class="navchip" href="#goal">학습 목표</a>
+    <a class="navchip" href="#think">생각 깨우기</a>
+    <a class="navchip" href="#concept1">상태 변화란</a>
+    <a class="navchip" href="#lab1">실험① 물의 상태 변화</a>
+    <a class="navchip" href="#concept2">융해·응고</a>
+    <a class="navchip" href="#concept3">기화·액화</a>
+    <a class="navchip" href="#lab2">실험② 드라이아이스 승화</a>
+    <a class="navchip" href="#concept4">승화</a>
+    <a class="navchip" href="#concept5">정리</a>
+    <a class="navchip" href="#check">스스로 확인하기</a>
+    <a class="navchip" href="#more">추가 확인 문제</a>
+    <a class="navchip" href="#recap">배운 내용 정리</a>
+    <a class="navchip" href="#next">다음 단원</a>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="crumbs">4. 물질의 상태 변화 &nbsp;›&nbsp; 1. 입자의 운동과 물질의 상태 &nbsp;›&nbsp; 3. 물질의 상태 변화</div>
+  <h1>물질은 어떻게 <span class="hl">모습을 바꿀까?</span></h1>
+  <p class="sub">얼음, 물, 수증기 — 같은 물질이지만 다른 모습! 오늘은 물질의 상태가 변하는 다양한 현상을 직접 관찰해 봐요.</p>
+  <div class="hero-art">
+    <div class="hero-chip s">🧊</div>
+    <div class="hero-chip l">💧</div>
+    <div class="hero-chip g">☁️</div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- 이전 단원 확인하기 -->
+  <section class="block fade-in" id="prev">
+    <span class="eyebrow tag-prev">↩ 이전 단원 확인하기</span>
+    <h2>물질의 상태, 기억나나요?</h2>
+    <div class="card">
+      <p>상온에서 다음 설명에 해당하는 상태로 존재하는 물질을 골라 <b>○</b>로 표시해 보자.</p>
+      <table class="checktable" id="prevTable">
+        <thead>
+          <tr><th></th><th>암석</th><th>식초</th><th>산소</th></tr>
+        </thead>
+        <tbody>
+          <tr data-answer="0,1">
+            <td>담는 용기에 따라 모양이 달라진다.</td>
+            <td class="opt-cell" data-col="0"><span class="circle"></span></td>
+            <td class="opt-cell" data-col="1"><span class="circle"></span></td>
+            <td class="opt-cell" data-col="2"><span class="circle"></span></td>
+          </tr>
+          <tr data-answer="0,1">
+            <td>압력을 가해도 부피가 거의 변하지 않는다.</td>
+            <td class="opt-cell" data-col="0"><span class="circle"></span></td>
+            <td class="opt-cell" data-col="1"><span class="circle"></span></td>
+            <td class="opt-cell" data-col="2"><span class="circle"></span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="actions">
+        <button class="btn" onclick="checkPrev()">정답 확인</button>
+        <button class="btn ghost" onclick="resetPrev()">다시 풀기</button>
+      </div>
+      <div class="feedback" id="prevFeedback">
+        📌 <b>담는 용기에 따라 모양이 달라진다</b> → 액체인 <b>식초</b> / <b>압력을 가해도 부피가 거의 변하지 않는다</b> → 고체인 <b>암석</b>과 액체인 <b>식초</b>. 기체인 산소는 압력을 가하면 부피가 쉽게 줄어들어요!
+      </div>
+    </div>
+  </section>
+
+  <!-- 학습 목표 -->
+  <section class="block fade-in" id="goal">
+    <span class="eyebrow tag-goal">🎯 이 단원을 배우면</span>
+    <h2>학습 목표</h2>
+    <p class="pageref">교과서 124쪽</p>
+    <div class="goal-grid">
+      <div class="goal-card"><div class="goal-num">1</div><div>여러 가지 물질의 <b>상태 변화를 관찰</b>하여 구분할 수 있다.</div></div>
+      <div class="goal-card"><div class="goal-num">2</div><div>물질의 상태가 변할 때 <b>성질이 변하지 않음</b>을 설명할 수 있다.</div></div>
+    </div>
+  </section>
+
+  <!-- 생각 깨우기 -->
+  <section class="block fade-in" id="think">
+    <span class="eyebrow tag-think">💭 생각 깨우기</span>
+    <h2>초콜릿은 왜 굳었을까?</h2>
+    <p class="pageref">교과서 124쪽</p>
+    <div class="think-card">
+      <div style="font-size:2.4rem;">🍫🥭</div>
+      <p class="qtext">얼린 망고에 초콜릿을 입혔더니, 겉면의 초콜릿이 <br>매끈하게 굳었어요. 초콜릿의 상태는 어떻게 변한 것일까?</p>
+      <button class="btn" onclick="toggleReveal('thinkReveal')">💡 생각 확인하기</button>
+      <div class="reveal-box" id="thinkReveal">
+        액체 상태인 초콜릿은 얼린 망고 표면에서 <b>고체</b>로 굳는다.
+      </div>
+    </div>
+  </section>
+
+  <!-- 개념1: 상태변화 -->
+  <section class="block fade-in" id="concept1">
+    <span class="eyebrow tag-concept">📘 교과서 개념</span>
+    <h2>물질의 상태 변화</h2>
+    <p class="pageref">교과서 124쪽</p>
+    <div class="card">
+      <p class="concept-text">
+        얼음이 녹으면 물이 되고, 물이 증발하면 수증기가 되는 것처럼 물질의 상태가 변하는 것을
+        <span class="blank" onclick="this.classList.toggle('show')">상태 변화</span>
+        (이)라고 한다.
+        <span style="font-size:.8rem;color:var(--ink-soft);">(클릭해서 정답 확인)</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- 실험1 -->
+  <section class="block fade-in" id="lab1">
+    <span class="eyebrow tag-lab">🔬 해 보기</span>
+    <h2>물질의 상태 변화 관찰하기</h2>
+    <p class="pageref">교과서 124쪽</p>
+    <div class="lab-card">
+      <div class="lab-head"><span class="lab-icon">🧪</span><h3>뜨거운 물과 얼음으로 관찰하는 상태 변화</h3></div>
+      <div class="lab-body">
+
+        <div class="lab-sub"><span class="num">🧰</span> 준비물</div>
+        <div class="chip-row">
+          <span class="mat-chip">뜨거운 물</span><span class="mat-chip">얼음</span><span class="mat-chip">비커</span>
+          <span class="mat-chip">시계 접시</span><span class="mat-chip">푸른색 염화 코발트 종이</span><span class="mat-chip">핀셋</span>
+          <span class="mat-chip">실험복</span><span class="mat-chip">보안경</span><span class="mat-chip">실험용 장갑</span>
+          <span class="mat-chip">면장갑</span><span class="mat-chip">내열 장갑</span>
+        </div>
+
+        <div class="lab-sub"><span class="num">⚠️</span> 안전</div>
+        <ul class="safety-list">
+          <li><span class="warnicon">🔥</span> 뜨거운 물을 다룰 때 내열 장갑을 착용하고 화상을 입지 않게 주의한다.</li>
+          <li><span class="warnicon">🥼</span> 유리 기구가 깨지지 않게 주의한다.</li>
+        </ul>
+
+        <a class="video-link" href="https://pubvw-cms.mirae-n.com/web_document/471712/1/html/index.html?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL3B1YnZ3LWNtcy5taXJhZS1uLmNvbS93ZWJfZG9jdW1lbnQvNDcxNzEyLzEvaHRtbC9pbmRleC5odG1sIiwiZXhwIjoxNzg4MDc0OTgzNjgxLCJpYXQiOjE3ODgwNzEzODM2ODEsInBhdGgiOiJ3ZWJfZG9jdW1lbnQifQ.DEogHotNW5ZhZrxXC3QNqZNCypqN0Ffvce2g93uQWSE" target="_blank" rel="noopener noreferrer">
+          <span class="video-link-play">▶</span>
+          <span class="video-link-text">
+            <b>실험 영상 보기</b>
+            <span>물질의 상태 변화 — 시계 접시 실험 (새 창에서 열림)</span>
+          </span>
+          <span class="video-link-arrow">↗</span>
+        </a>
+
+        <div class="lab-sub"><span class="num">1</span> 과정</div>
+        <div class="step-block">
+          <div class="step-flex">
+            <img src="images/lab1-beaker.jpg" alt="뜨거운 물이 든 비커 위에 얼음이 담긴 시계 접시">
+            <div class="step-text">
+              <p class="instruction">뜨거운 물이 들어 있는 비커 위에 얼음이 담긴 시계 접시를 올려놓고, 변화를 관찰해 보자.</p>
+              <div class="qa-box">
+                <p class="q">Q. 시계 접시 윗면과 아랫면에서는 어떤 변화가 일어나는가?</p>
+                <p class="a" id="qa1-a">시계 접시 윗면에서는 얼음이 녹아 물이 되고, 아랫면에서는 액체 방울이 맺힌다.</p>
+                <button class="btn ghost small" onclick="revealQA('qa1-a', this)">정답 보기</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lab-sub"><span class="num">2</span> 과정</div>
+        <div class="step-block">
+          <div class="step-flex">
+            <img src="images/lab1-cobalt-paper.jpg" alt="푸른색 염화 코발트 종이로 색 변화 관찰">
+            <div class="step-text">
+              <p class="instruction">비커에 든 물과 시계 접시 아랫면에 생긴 액체 방울에 푸른색 염화 코발트 종이를 각각 대고 색 변화를 관찰해 보자.</p>
+              <div class="qa-box">
+                <p class="q">Q. 푸른색 염화 코발트 종이의 색은 어떻게 변하는가?</p>
+                <p class="a" id="qa2-a">푸른색 염화 코발트 종이는 모두 붉게 변한다.</p>
+                <button class="btn ghost small" onclick="revealQA('qa2-a', this)">정답 보기</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lab-sub"><span class="num">✏️</span> 정리</div>
+        <div class="qa-box" style="background:#EAF3FF;">
+          <p class="q" style="color:var(--solid);">과정 2의 결과를 바탕으로, 시계 접시 아랫면에 생긴 액체는 어떻게 생성되었는지 토의하여 정리해 보자.</p>
+          <p class="a" id="qa3-a">비커에 든 물이 증발하여 수증기가 되고, 차가운 시계 접시 아랫면에서 수증기가 다시 물로 변한 것이다.</p>
+          <button class="btn ghost small" onclick="revealQA('qa3-a', this)">정답 보기</button>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 개념2: 융해와 응고 -->
+  <section class="block fade-in" id="concept2">
+    <span class="eyebrow tag-concept">📘 교과서 개념</span>
+    <h2>융해와 응고</h2>
+    <p class="pageref">교과서 125쪽</p>
+    <div class="term-grid">
+      <div class="term-card melt">
+        <span class="arrow-tag warm">가열 →</span>
+        <div style="font-size:1.8rem;">🧊→💧</div>
+        <h3>융해</h3>
+        <p>고체가 <b>액체</b>로 변하는 현상</p>
+      </div>
+      <div class="term-card freeze">
+        <span class="arrow-tag cool">← 냉각</span>
+        <div style="font-size:1.8rem;">💧→🧊</div>
+        <h3>응고</h3>
+        <p>액체가 <b>고체</b>로 변하는 현상</p>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px;">
+      <p style="margin:0 0 10px;font-weight:700;">🔎 융해와 응고의 예</p>
+      <div class="example-gallery">
+        <figure class="ex-photo"><img src="images/ex-melt.png" alt="아이스크림이 녹는다 - 융해"></figure>
+        <figure class="ex-photo"><img src="images/ex-freeze.png" alt="물이 얼어 고드름이 생긴다 - 응고"></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 개념3: 기화와 액화 -->
+  <section class="block fade-in" id="concept3">
+    <span class="eyebrow tag-concept">📘 교과서 개념</span>
+    <h2>기화와 액화</h2>
+    <p class="pageref">교과서 125쪽</p>
+    <div class="term-grid">
+      <div class="term-card vap">
+        <span class="arrow-tag warm">가열 →</span>
+        <div style="font-size:1.8rem;">💧→☁️</div>
+        <h3>기화</h3>
+        <p>액체가 <b>기체</b>로 변하는 현상</p>
+      </div>
+      <div class="term-card cond">
+        <span class="arrow-tag cool">← 냉각</span>
+        <div style="font-size:1.8rem;">☁️→💧</div>
+        <h3>액화</h3>
+        <p>기체가 <b>액체</b>로 변하는 현상</p>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px;">
+      <p style="margin:0 0 10px;font-weight:700;">🔎 기화와 액화의 예</p>
+      <div class="example-gallery">
+        <figure class="ex-photo"><img src="images/ex-vaporize.png" alt="물이 끓어 수증기가 된다 - 기화"></figure>
+        <figure class="ex-photo"><img src="images/ex-condense.png" alt="이른 새벽 풀잎에 이슬이 맺힌다 - 액화"></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 실험2 -->
+  <section class="block fade-in" id="lab2">
+    <span class="eyebrow tag-lab">🔬 해 보기</span>
+    <h2>드라이아이스의 승화 현상 관찰하기</h2>
+    <p class="pageref">교과서 126쪽</p>
+    <div class="lab-card">
+      <div class="lab-head" style="background:var(--solid);"><span class="lab-icon">❄️</span><h3>드라이아이스와 비누막으로 관찰하는 승화</h3></div>
+      <div class="lab-body">
+
+        <div class="lab-sub"><span class="num">🧰</span> 준비물</div>
+        <div class="chip-row">
+          <span class="mat-chip">드라이아이스</span><span class="mat-chip">투명한 유리컵</span><span class="mat-chip">집게</span>
+          <span class="mat-chip">비눗방울 용액</span><span class="mat-chip">운동화 끈</span><span class="mat-chip">실험복</span>
+          <span class="mat-chip">보안경</span><span class="mat-chip">실험용 장갑</span><span class="mat-chip">내열 장갑</span>
+        </div>
+
+        <div class="lab-sub"><span class="num">⚠️</span> 안전</div>
+        <ul class="safety-list">
+          <li><span class="warnicon">🥶</span> 드라이아이스의 온도는 −78 ℃ 이하로 맨손으로 잡으면 동상을 입게 되므로 반드시 내열 장갑을 착용한다.</li>
+          <li><span class="warnicon">💥</span> 드라이아이스를 밀폐된 용기에 보관하면 폭발할 위험이 있으므로 주의한다.</li>
+        </ul>
+
+        <a class="video-link" style="background:linear-gradient(135deg,var(--solid),#6E9BE0);" href="https://pubvw-cms.mirae-n.com/web_document/471711/1/html/index.html?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL3B1YnZ3LWNtcy5taXJhZS1uLmNvbS93ZWJfZG9jdW1lbnQvNDcxNzExLzEvaHRtbC9pbmRleC5odG1sIiwiZXhwIjoxNzg4MDc0OTQ5MzIzLCJpYXQiOjE3ODgwNzEzNDkzMjMsInBhdGgiOiJ3ZWJfZG9jdW1lbnQifQ.eQZ3ApXt-emolZOYxc1qTMiW5yqxwFaoNQiAOZOv8Bo" target="_blank" rel="noopener noreferrer">
+          <span class="video-link-play">▶</span>
+          <span class="video-link-text">
+            <b>실험 영상 보기</b>
+            <span>드라이아이스의 승화 실험 (새 창에서 열림)</span>
+          </span>
+          <span class="video-link-arrow">↗</span>
+        </a>
+
+        <div class="lab-sub"><span class="num">1</span> 과정</div>
+        <div class="step-block">
+          <p class="instruction">투명한 유리컵에 드라이아이스를 넣는다.</p>
+        </div>
+
+        <div class="lab-sub"><span class="num">2</span> 과정</div>
+        <div class="step-block">
+          <div class="step-flex">
+            <img src="images/lab2-dryice-bubble.jpg" alt="운동화 끈으로 비누막 만들기">
+            <div class="step-text">
+              <p class="instruction">운동화 끈에 비눗방울 용액을 적신 후 양손으로 끈을 팽팽하게 잡고, 1의 컵 입구 위를 천천히 스쳐 지나가면서 비누막을 만든다.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lab-sub"><span class="num">3</span> 과정</div>
+        <div class="step-block">
+          <div class="step-flex">
+            <img src="images/lab2-soap-film.jpg" alt="컵 입구에 생긴 비누막 변화 관찰">
+            <div class="step-text">
+              <p class="instruction">시간이 지남에 따라 컵 입구에 생긴 비누막이 어떻게 달라지는지 관찰해 보자.</p>
+              <div class="qa-box">
+                <p class="q">🌱 관찰 결과를 글과 그림으로 정리해 보면?</p>
+                <p class="a" id="qa4-a">비누막이 점점 부풀어 올라 크기가 커진다.</p>
+                <button class="btn ghost small" onclick="revealQA('qa4-a', this)">정답 보기</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lab-sub"><span class="num">✏️</span> 정리</div>
+        <div class="qa-box" style="background:#EAF3FF;">
+          <p class="q" style="color:var(--solid);">정리한 내용을 바탕으로 하여 드라이아이스의 상태가 어떻게 변하는지 설명해 보자.</p>
+          <p class="a" id="qa5-a">드라이아이스가 녹지 않고 비누막의 크기가 커진 것으로 보아, 고체 상태의 드라이아이스가 기체 상태로 변했다.</p>
+          <button class="btn ghost small" onclick="revealQA('qa5-a', this)">정답 보기</button>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 개념4: 승화 -->
+  <section class="block fade-in" id="concept4">
+    <span class="eyebrow tag-concept">📘 교과서 개념</span>
+    <h2>승화</h2>
+    <p class="pageref">교과서 126~127쪽</p>
+    <div class="term-card sub" style="border-radius:20px; padding:22px;">
+      <div style="font-size:1.8rem;">🧊⇄☁️</div>
+      <h3>승화</h3>
+      <p>고체가 <b>기체</b>로 변하거나, 기체가 <b>고체</b>로 변하는 현상</p>
+    </div>
+    <div class="card" style="margin-top:16px;">
+      <p style="margin:0 0 10px;font-weight:700;">🔎 승화의 예</p>
+      <div class="example-gallery">
+        <figure class="ex-photo">
+          <img src="images/ex-sublime-1.png" alt="추운 겨울 영하의 기온에서 언 명태가 마른다 - 승화(고체→기체)">
+          <figcaption>추운 겨울 영하의 기온에서 언 명태가 마른다. <b>(고체 → 기체)</b></figcaption>
+        </figure>
+        <figure class="ex-photo">
+          <img src="images/ex-sublime-2.png" alt="나뭇잎에 서리가 생긴다 - 승화(기체→고체)">
+          <figcaption>나뭇잎에 서리가 생긴다. <b>(기체 → 고체)</b></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 개념5: 정리 다이어그램 -->
+  <section class="block fade-in" id="concept5">
+    <span class="eyebrow tag-concept">📘 교과서 개념</span>
+    <h2>물질의 상태 변화 한눈에 보기</h2>
+    <p class="pageref">교과서 127쪽</p>
+    <div class="card summary-card">
+      <p style="margin:0 0 6px;">물질은 상태에 따라 <b>고체, 액체, 기체</b>로 구분할 수 있고, 한 가지 상태로만 존재하는 것이 아니라 다른 상태로 변할 수 있다.</p>
+      <img src="images/summary-diagram.jpg" alt="고체-액체-기체 상태 변화 다이어그램: 융해, 기화, 승화, 응고, 액화, 승화">
+      <div class="term-legend">
+        <span><span class="dot" style="background:var(--warm);"></span> 융해 · 기화 · 승화 (열 흡수)</span>
+        <span><span class="dot" style="background:var(--cool);"></span> 응고 · 액화 · 승화 (열 방출)</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 스스로 확인하기 -->
+  <section class="block fade-in" id="check">
+    <span class="eyebrow tag-check">✅ 스스로 확인하기</span>
+    <h2>배운 내용, 확인해 볼까요?</h2>
+    <p class="pageref">교과서 127쪽</p>
+
+    <div class="card sc-card">
+      <p class="sc-q"><span class="qnum">1</span> 문장을 완성해 보자.</p>
+      <p class="concept-text">
+        고체가 액체로 변하는 현상을
+        <span class="blank" onclick="this.classList.toggle('show')">융해</span>
+        , 액체가
+        <span class="blank" onclick="this.classList.toggle('show')">기체</span>
+        (으)로 변하는 현상을 기화라고 한다.
+      </p>
+    </div>
+
+    <div class="card sc-card">
+      <p class="sc-q"><span class="qnum">2</span> 문장이 옳으면 O, 옳지 않으면 X를 선택해 보자.</p>
+      <p style="margin:0 0 6px;">고체 상태에서 기체 상태로 변하려면 반드시 액체 상태를 거쳐야 한다.</p>
+      <div class="ox-row">
+        <button class="ox-btn" onclick="pickOX(this,false)">O</button>
+        <button class="ox-btn" onclick="pickOX(this,true)">X</button>
+      </div>
+      <div class="feedback" id="oxFeedback">
+        정답은 <b>X</b>! 승화 현상처럼 고체가 액체를 거치지 않고 바로 기체로 변할 수 있어요. (예: 드라이아이스)
+      </div>
+    </div>
+
+    <div class="card sc-card">
+      <p class="sc-q"><span class="qnum">3</span> 탐구 능력 | 추운 겨울 밖에 있다가 따뜻한 실내에 들어가면 갑자기 안경이 뿌옇게 변하는 까닭을 상태 변화와 관련지어 설명해 보자.</p>
+      <div class="qa-box">
+        <p class="a" id="qa6-a">공기 중의 수증기가 차가운 안경 표면에서 액화하여 물방울로 맺히기 때문이다.</p>
+        <button class="btn ghost small" onclick="revealQA('qa6-a', this)">정답 보기</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 추가 확인 문제 -->
+  <section class="block fade-in" id="more">
+    <span class="eyebrow tag-check">✏️ 추가 확인 문제</span>
+    <h2>다음 현상에서 일어나는 상태 변화를 골라 써 보자.</h2>
+    <p class="pageref">교과서 127쪽</p>
+    <div class="card">
+      <div class="match-grid" id="matchGrid">
+        <div class="match-item">젖은 빨래가 마른다.</div>
+        <select class="match-select" data-answer="기화">
+          <option value="">선택하기</option>
+          <option>융해</option><option>응고</option><option>기화</option><option>액화</option>
+        </select>
+
+        <div class="match-item">얼음이 녹아 물이 된다.</div>
+        <select class="match-select" data-answer="융해">
+          <option value="">선택하기</option>
+          <option>융해</option><option>응고</option><option>기화</option><option>액화</option>
+        </select>
+
+        <div class="match-item">겨울철 처마 끝에 고드름이 생긴다.</div>
+        <select class="match-select" data-answer="응고">
+          <option value="">선택하기</option>
+          <option>융해</option><option>응고</option><option>기화</option><option>액화</option>
+        </select>
+
+        <div class="match-item">차가운 캔 표면에 물방울이 맺힌다.</div>
+        <select class="match-select" data-answer="액화">
+          <option value="">선택하기</option>
+          <option>융해</option><option>응고</option><option>기화</option><option>액화</option>
+        </select>
+      </div>
+      <div class="actions">
+        <button class="btn" onclick="checkMatch()">정답 확인</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 배운 내용 정리하기 -->
+  <section class="block fade-in" id="recap">
+    <span class="eyebrow tag-wrap">🧠 배운 내용 정리하기</span>
+    <h2>이 단원에서 배운 내용을 정리해 보자.</h2>
+    <p class="pageref">교과서 127쪽</p>
+    <div class="card">
+      <div class="recap-grid">
+        <div class="recap-chip" style="background:var(--solid-l);"><span class="ic">📘</span><b>상태 변화</b>물질의 상태가 변하는 것</div>
+        <div class="recap-chip" style="background:var(--solid-l);"><span class="ic">🧊💧</span><b>융해</b>고체→액체</div>
+        <div class="recap-chip" style="background:var(--liquid-l);"><span class="ic">💧🧊</span><b>응고</b>액체→고체</div>
+        <div class="recap-chip" style="background:var(--gas-l);"><span class="ic">💧☁️</span><b>기화</b>액체→기체</div>
+        <div class="recap-chip" style="background:var(--liquid-l);"><span class="ic">☁️💧</span><b>액화</b>기체→액체</div>
+      </div>
+      <div style="display:flex; justify-content:center; margin-top:14px;">
+        <div class="recap-chip" style="max-width:220px; background:linear-gradient(135deg,var(--solid-l),var(--gas-l));"><span class="ic">🧊⇄☁️</span><b>승화</b>고체⇄기체 (액체를 거치지 않음)</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 다음 단원 -->
+  <section class="block fade-in" id="next">
+    <div class="next-card">
+      <div class="jua">📖 다음 단원 안내</div>
+      <p>다음 시간에는 <b>‘4. 상태 변화와 입자 배열의 변화’</b>에 대해 알아보자.</p>
+      <p style="font-size:.85rem;">교과서 128쪽 ~ 131쪽</p>
+    </div>
+  </section>
+
+  <footer>미래엔 중학교 과학 1 · 4단원 물질의 상태 변화 · 수업 학습자료</footer>
+</div>
+
+<script>
+  // scroll fade-in
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); } });
+  }, {threshold:0.08});
+  document.querySelectorAll('.fade-in').forEach(el=>io.observe(el));
+
+  function revealQA(id, btn){
+    const el = document.getElementById(id);
+    el.classList.add('show');
+    btn.style.display='none';
+  }
+  function toggleReveal(id){
+    document.getElementById(id).classList.toggle('show');
+  }
+
+  // 이전 단원 확인 표
+  document.querySelectorAll('#prevTable .opt-cell').forEach(cell=>{
+    cell.addEventListener('click', ()=>{
+      const row = cell.parentElement;
+      row.querySelectorAll('.opt-cell').forEach(c=>c.classList.remove('picked','correct','wrong'));
+      cell.classList.add('picked');
+    });
+  });
+  function checkPrev(){
+    document.querySelectorAll('#prevTable tbody tr').forEach(row=>{
+      const answers = row.dataset.answer.split(',').map(Number);
+      row.querySelectorAll('.opt-cell').forEach(cell=>{
+        const col = Number(cell.dataset.col);
+        const isAnswer = answers.includes(col);
+        const isPicked = cell.classList.contains('picked');
+        cell.classList.remove('picked');
+        if(isAnswer){ cell.classList.add('correct'); }
+        else if(isPicked){ cell.classList.add('wrong'); }
+      });
+    });
+    document.getElementById('prevFeedback').classList.add('show');
+  }
+  function resetPrev(){
+    document.querySelectorAll('#prevTable .opt-cell').forEach(c=>c.classList.remove('picked','correct','wrong'));
+    document.getElementById('prevFeedback').classList.remove('show');
+  }
+
+  // OX
+  function pickOX(btn, isCorrect){
+    document.querySelectorAll('.ox-btn').forEach(b=>b.classList.remove('pick-correct','pick-wrong'));
+    btn.classList.add(isCorrect ? 'pick-correct' : 'pick-wrong');
+    document.getElementById('oxFeedback').classList.add('show');
+  }
+
+  // matching
+  function checkMatch(){
+    document.querySelectorAll('#matchGrid .match-select').forEach(sel=>{
+      sel.classList.remove('ok','no');
+      if(sel.value === sel.dataset.answer){ sel.classList.add('ok'); }
+      else if(sel.value){ sel.classList.add('no'); }
+    });
+  }
+</script>
+</body>
+</html>
